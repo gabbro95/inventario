@@ -1,4 +1,3 @@
-"""
 [app]
 
 # (str) Title of your application
@@ -328,4 +327,3 @@ warn_on_root = 1
 #    Then, invoke the command line with the "demo" profile:
 #
 #buildozer --profile demo android debug
-"""
