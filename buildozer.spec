@@ -4,10 +4,10 @@
 title = Inventario
 
 # (str) Package name
-package.name = myapp
+package.name = inventario
 
 # (str) Package domain (needed for android/ios packaging)
-package.domain = org.test
+package.domain = org.inventario
 
 # (str) Source code where the main.py live
 source.dir = .
@@ -82,7 +82,7 @@ fullscreen = 0
 # red, blue, green, black, white, gray, cyan, magenta, yellow, lightgray,
 # darkgray, grey, lightgrey, darkgrey, aqua, fuchsia, lime, maroon, navy,
 # olive, purple, silver, teal.
-#android.presplash_color = #FFFFFF
+android.presplash_color = #FFFFFF
 
 # (list) Permissions
 android.permissions = INTERNET
@@ -129,7 +129,7 @@ android.permissions = INTERNET
 #android.entrypoint = org.renpy.android.PythonActivity
 
 # (str) Android app theme, default is ok for Kivy-based app
-# android.apptheme = "@android:style/Theme.NoTitleBar"
+android.apptheme = "@android:style/Theme.NoTitleBar"
 
 # (list) Pattern to whitelist for the whole project
 #android.whitelist =
