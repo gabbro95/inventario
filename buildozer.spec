@@ -55,7 +55,7 @@ requirements = python3,Kivy==2.3.0,kivymd==1.1.1,pillow==10.2.0,Pyrebase4==4.7.1
 orientation = portrait
 
 # (list) List of service to declare
-#services = NAME:ENTRYPOINT_TO_PY,NAME2:ENTRYPOINT2_TO_PY
+services = NAME:ENTRYPOINT_TO_PY,NAME2:ENTRYPOINT2_TO_PY
 
 #
 # OSX Specific
