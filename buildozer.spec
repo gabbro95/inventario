@@ -20,7 +20,7 @@ source.dir = .
 source.include_exts = py,png,jpg,kv,atlas,ogg,sdl2_ttf
 
 # (list) List of inclusions using pattern matching
-source.include_patterns = data/*.png, sound/*.ogg
+#source.include_patterns = data/*.png, sound/*.ogg
 
 # (list) Source files to exclude (let empty to not exclude anything)
 #source.exclude_exts = spec
