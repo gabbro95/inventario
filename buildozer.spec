@@ -5,19 +5,19 @@
 [app]
 
 # (str) Title of your application
-title = inventario
+title = Inventario
 
 # (str) Package name
 package.name = inventario 
 
 # (str) Package domain (needed for android/ios packaging)
-package.domain = org.inventario.edu
+package.domain = org.inventario
 
 # (str) Source code where the main.py live
 source.dir = .
 
 # (list) Source files to include (let empty to include all the files)
-source.include_exts = py,png,jpg,kv,atlas,ogg
+source.include_exts = py,png,jpg,kv,atlas,ogg,sdl2_ttf
 
 # (list) List of inclusions using pattern matching
 source.include_patterns = data/*.png, sound/*.ogg
@@ -40,7 +40,7 @@ version = 0.1
 
 # (list) Application requirements
 # comma separated e.g. requirements = sqlite3,kivy
-requirements = python3,Kivy==2.3.0,kivymd==1.1.1,pillow==10.2.0,Pyrebase4==4.7.1
+requirements = python3,Kivy==2.3.0,https://github.com/kivymd/KivyMD/archive/master.zip,sdl2_ttf==2.0.15,pillow==10.2.0,Pyrebase4==4.7.1
 
 # (str) Custom source folders for requirements
 # Sets custom source for any requirements with recipes
@@ -50,10 +50,10 @@ requirements = python3,Kivy==2.3.0,kivymd==1.1.1,pillow==10.2.0,Pyrebase4==4.7.1
 #garden_requirements =
 
 # (str) Presplash of the application
-presplash.filename = %(source.dir)s/data/presplash.png
+#presplash.filename = %(source.dir)s/data/presplash.png
 
 # (str) Icon of the application
-icon.filename = %(source.dir)s/data/icon512x512.png
+#icon.filename = %(source.dir)s/data/icon512x512.png
 
 # (str) Supported orientation (one of landscape, portrait or all)
 orientation = portrait
@@ -72,7 +72,7 @@ orientation = portrait
 osx.python_version = 3
 
 # Kivy version to use
-osx.kivy_version = 1.10.1
+osx.kivy_version = 2.3.0
 
 #
 # Android specific
@@ -93,7 +93,7 @@ android.permissions = INTERNET,CHANGE_WIFI_MULTICAST_STATE,ACCESS_NETWORK_STATE,
 
 # (int) Android API to use
 # see https://developer.android.com/distribute/best-practices/develop/target-sdk
-android.api = 27
+#android.api = 27
 
 # (int) Minimum API required
 #android.minapi = 19
