@@ -21,16 +21,28 @@ public class UtenteDAO {
         return null;
     }
 
-    public boolean creaUtente(String email) {
+    public boolean creaUtente(Utente utente) {
         String sql = "INSERT INTO utente (email) VALUES (?)";
         try (Connection conn = DBManager.getConnection();
-             PreparedStatement stmt = conn.prepareStatement(sql)) {
-            stmt.setString(1, email);
+             PreparedStatement stmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
+
+            stmt.setString(1, utente.getEmail());
+
             int affectedRows = stmt.executeUpdate();
-            return affectedRows > 0;
+
+            if (affectedRows > 0) {
+                ResultSet generatedKeys = stmt.getGeneratedKeys();
+                if (generatedKeys.next()) {
+                    utente.setId(generatedKeys.getInt(1));
+                }
+                return true;
+            }
+
         } catch (SQLException e) {
-            // può fallire per UNIQUE constraint
-            return false;
+            e.printStackTrace();
         }
+
+        return false;
     }
+
 }

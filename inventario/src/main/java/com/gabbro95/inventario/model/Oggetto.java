@@ -16,6 +16,12 @@ public class Oggetto {
         this.dataInserimento = dataInserimento;
         this.contenitoreId = contenitoreId;
     }
+    public Oggetto(String nome, int numero, LocalDate dataInserimento, int contenitoreId) {
+        this.nome = nome;
+        this.numero = numero;
+        this.dataInserimento = dataInserimento;
+        this.contenitoreId = contenitoreId;
+    }	
     // Getter e Setter
     public int getId() { return id; }
     public void setId(int id) { this.id = id; }
