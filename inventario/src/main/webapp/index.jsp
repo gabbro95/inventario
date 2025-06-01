@@ -18,6 +18,9 @@
             <div class="d-grid">
                 <button type="submit" class="btn btn-primary">Entra</button>
             </div>
+            <a href="https://accounts.google.com/o/oauth2/v2/auth?scope=email&access_type=online&response_type=code&redirect_uri=http://localhost:8080/inventario/oauth2callback&client_id=TUO_CLIENT_ID">
+			  Login con Google
+			</a>
         </form>
 
         <%
