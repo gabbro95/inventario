@@ -1,1 +1,42 @@
-/target/
+# === Java / Maven ===
+target/
+*.class
+*.jar
+*.war
+*.ear
+
+# === Eclipse ===
+.settings/
+.project
+.classpath
+
+# === OS / Misc ===
+.DS_Store
+Thumbs.db
+
+# === Logs ===
+*.log
+
+# === IDEs ===
+.idea/
+*.iml
+*.iws
+*.ipr
+
+# === IntelliJ run configs ===
+*.run.xml
+
+# === Tomcat / Web deploy ===
+**/out/
+**/work/
+**/temp/
+
+# === Configurazione sensibile ===
+.env
+*.properties
+!src/main/resources/application.properties
+
+# === GitGuardian: escludi file segreti personalizzati ===
+secrets/
+credentials/
+config/private/
