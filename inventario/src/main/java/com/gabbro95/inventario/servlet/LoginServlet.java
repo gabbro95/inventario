@@ -19,6 +19,7 @@ public class LoginServlet extends HttpServlet {
         utenteDAO = new UtenteDAO();
     }
 
+    // Per richieste GET (es. da OAuth)
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
@@ -39,6 +40,31 @@ public class LoginServlet extends HttpServlet {
         HttpSession session = request.getSession();
         session.setAttribute("utente", utente);
 
-        response.sendRedirect("dashboard.jsp");
+        response.sendRedirect("jsp/dashboard.jsp");
+    }
+
+    // Per richieste POST (es. form HTML)
+    @Override
+    protected void doPost(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+
+        String email = request.getParameter("email");
+
+        if (email == null || email.isEmpty()) {
+            request.setAttribute("errore", "Email obbligatoria.");
+            request.getRequestDispatcher("index.jsp").forward(request, response);
+            return;
+        }
+
+        Utente utente = utenteDAO.trovaPerEmail(email);
+        if (utente == null) {
+            utente = new Utente(email);
+            utenteDAO.creaUtente(utente);
+        }
+
+        HttpSession session = request.getSession();
+        session.setAttribute("utente", utente);
+
+        response.sendRedirect("jsp/dashboard.jsp");
     }
 }

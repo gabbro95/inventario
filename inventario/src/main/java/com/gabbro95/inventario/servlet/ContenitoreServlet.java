@@ -1,41 +1,42 @@
 package com.gabbro95.inventario.servlet;
 
 import com.gabbro95.inventario.dao.ContenitoreDAO;
-import com.gabbro95.inventario.model.Contenitore;
+import com.gabbro95.inventario.model.Utente;
 
-import jakarta.servlet.*;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.*;
-import jakarta.servlet.annotation.*;
+
 import java.io.IOException;
-import java.util.List;
 
-@WebServlet("/contenitori")
+@WebServlet("/contenitore")
 public class ContenitoreServlet extends HttpServlet {
-	
-	private static final long serialVersionUID = 1L;
 
-
+    private static final long serialVersionUID = 1L;
     private ContenitoreDAO contenitoreDAO;
 
     @Override
-    public void init() throws ServletException {
+    public void init() {
         contenitoreDAO = new ContenitoreDAO();
     }
 
     @Override
-    protected void doGet(HttpServletRequest request, HttpServletResponse response)
+    protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
 
         HttpSession session = request.getSession(false);
-        if (session == null || session.getAttribute("email") == null) {
-            response.sendRedirect("login.jsp");
+        Utente utente = (Utente) (session != null ? session.getAttribute("utente") : null);
+
+        if (utente == null) {
+            response.sendRedirect("index.jsp");
             return;
         }
 
-        String email = (String) session.getAttribute("email");
-        List<Contenitore> contenitori = contenitoreDAO.trovaPerEmailUtente(email);
+        String nome = request.getParameter("nome");
+        if (nome != null && !nome.trim().isEmpty()) {
+            contenitoreDAO.creaContenitore(nome, utente.getEmail());
+        }
 
-        request.setAttribute("contenitori", contenitori);
-        request.getRequestDispatcher("dashboard.jsp").forward(request, response);
+        response.sendRedirect("jsp/dashboard.jsp");
     }
 }

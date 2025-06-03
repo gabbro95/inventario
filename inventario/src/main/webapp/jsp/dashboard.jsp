@@ -25,7 +25,7 @@
         <p>Nessun contenitore trovato.</p>
     </c:if>
 
-    <form action="contenitore" method="post" class="mt-3">
+    <form action="nuovo-contenitore" method="post" class="mt-3">
         <div class="mb-3">
             <label for="nome" class="form-label">Nuovo Contenitore</label>
             <input type="text" class="form-control" name="nome" id="nome" required>
@@ -33,7 +33,8 @@
         <button type="submit" class="btn btn-primary">Aggiungi</button>
     </form>
 
-    <a href="logout" class="btn btn-outline-secondary mt-3">Logout</a>
+    <a href="${pageContext.request.contextPath}/logout">Logout</a>
+
 </div>
 </body>
 </html>
