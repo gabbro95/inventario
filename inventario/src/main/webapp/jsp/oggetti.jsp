@@ -54,5 +54,8 @@
         </tbody>
     </table>
 </div>
+    <form action="${pageContext.request.contextPath}/jsp/nuovo_oggetto.jsp" method="post" class="mt-3">
+    	<button type="submit" class="btn btn-primary">Aggiungi</button>
+	</form>
 </body>
 </html>

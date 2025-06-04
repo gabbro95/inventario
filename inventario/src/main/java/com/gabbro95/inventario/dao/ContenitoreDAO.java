@@ -6,46 +6,48 @@ import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ContenitoreDAO {
+public class ContenitoreDAO extends BaseDAO {
 
-    public List<Contenitore> trovaPerEmailUtente(String email) {
-        List<Contenitore> lista = new ArrayList<>();
-        String sql = "SELECT * FROM contenitore WHERE email_utente = ?";
-
-        try (Connection conn = DBManager.getConnection();
-             PreparedStatement stmt = conn.prepareStatement(sql)) {
-            stmt.setString(1, email);
-            ResultSet rs = stmt.executeQuery();
-
-            while (rs.next()) {
-                Contenitore c = new Contenitore(
-                    rs.getInt("id"),
-                    rs.getString("nome"),
-                    rs.getString("email_utente")
-                );
-                lista.add(c);
+    public List<Contenitore> getContenitoriPerUtente(String emailUtente) {
+        return execute(conn -> {
+            List<Contenitore> contenitori = new ArrayList<>();
+            String sql = "SELECT * FROM contenitore WHERE email_utente = ?";
+            try (PreparedStatement stmt = conn.prepareStatement(sql)) {
+                stmt.setString(1, emailUtente);
+                try (ResultSet rs = stmt.executeQuery()) {
+                    while (rs.next()) {
+                        Contenitore c = new Contenitore();
+                        c.setId(rs.getInt("id"));
+                        c.setNome(rs.getString("nome"));
+                        c.setEmailUtente(emailUtente);
+                        contenitori.add(c);
+                    }
+                }
             }
-
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-
-        return lista;
+            return contenitori;
+        });
     }
 
-    public boolean creaContenitore(String nome, String emailUtente) {
-        String sql = "INSERT INTO contenitore (nome, email_utente) VALUES (?, ?)";
+    public void creaContenitore(String nome, String emailUtente) {
+        execute(conn -> {
+            String sql = "INSERT INTO contenitore (nome, email_utente) VALUES (?, ?)";
+            try (PreparedStatement stmt = conn.prepareStatement(sql)) {
+                stmt.setString(1, nome);
+                stmt.setString(2, emailUtente);
+                stmt.executeUpdate();
+            }
+            return null;
+        });
+    }
 
-        try (Connection conn = DBManager.getConnection();
-             PreparedStatement stmt = conn.prepareStatement(sql)) {
-            stmt.setString(1, nome);
-            stmt.setString(2, emailUtente);
-            return stmt.executeUpdate() > 0;
-
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-
-        return false;
+    public void eliminaContenitore(int contenitoreId) {
+        execute(conn -> {
+            String sql = "DELETE FROM contenitore WHERE id = ?";
+            try (PreparedStatement stmt = conn.prepareStatement(sql)) {
+                stmt.setInt(1, contenitoreId);
+                stmt.executeUpdate();
+            }
+            return null;
+        });
     }
 }

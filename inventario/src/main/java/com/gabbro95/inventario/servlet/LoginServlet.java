@@ -8,6 +8,7 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.*;
 
 import java.io.IOException;
+import java.time.LocalDate;
 
 @WebServlet("/login")
 public class LoginServlet extends HttpServlet {
@@ -19,12 +20,11 @@ public class LoginServlet extends HttpServlet {
         utenteDAO = new UtenteDAO();
     }
 
-    // Per richieste GET (es. da OAuth)
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
 
-        String email = request.getParameter("email"); // da OAuth
+        String email = request.getParameter("email");
 
         if (email == null || email.isEmpty()) {
             response.sendRedirect("index.jsp");
@@ -33,8 +33,8 @@ public class LoginServlet extends HttpServlet {
 
         Utente utente = utenteDAO.trovaPerEmail(email);
         if (utente == null) {
-            utente = new Utente(email);
-            utenteDAO.creaUtente(utente);
+            utente = new Utente(email, null, null, LocalDate.now()); // nome e immagine nulli
+            utenteDAO.inserisciOaggiornaUtente(utente);
         }
 
         HttpSession session = request.getSession();
@@ -43,7 +43,6 @@ public class LoginServlet extends HttpServlet {
         response.sendRedirect("jsp/dashboard.jsp");
     }
 
-    // Per richieste POST (es. form HTML)
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
@@ -58,8 +57,8 @@ public class LoginServlet extends HttpServlet {
 
         Utente utente = utenteDAO.trovaPerEmail(email);
         if (utente == null) {
-            utente = new Utente(email);
-            utenteDAO.creaUtente(utente);
+            utente = new Utente(email, null, null, LocalDate.now());
+            utenteDAO.inserisciOaggiornaUtente(utente);
         }
 
         HttpSession session = request.getSession();

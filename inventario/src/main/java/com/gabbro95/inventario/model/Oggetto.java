@@ -22,6 +22,9 @@ public class Oggetto {
         this.dataInserimento = dataInserimento;
         this.contenitoreId = contenitoreId;
     }	
+    
+    public Oggetto() {
+    }
     // Getter e Setter
     public int getId() { return id; }
     public void setId(int id) { this.id = id; }

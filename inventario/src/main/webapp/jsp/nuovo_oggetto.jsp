@@ -11,7 +11,7 @@
 
 <h2>Nuovo Oggetto</h2>
 
-<form method="post" action="<c:url value='/oggetto' />">
+<form method="post" action="<c:url value='/oggetti' />">
     <div class="mb-3">
         <label for="nome" class="form-label">Nome oggetto</label>
         <input type="text" class="form-control" id="nome" name="nome" required>

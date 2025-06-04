@@ -11,7 +11,7 @@
     <div class="card shadow p-4 mx-auto" style="max-width: 500px;">
         <h3 class="mb-4 text-center">Crea un nuovo contenitore</h3>
 
-        <form action="contenitore" method="post">
+        <form action="${pageContext.request.contextPath}/contenitore" method="post">
             <div class="mb-3">
                 <label for="nome" class="form-label">Nome del contenitore</label>
                 <input type="text" class="form-control" id="nome" name="nome" required>

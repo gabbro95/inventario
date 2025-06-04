@@ -3,46 +3,64 @@ package com.gabbro95.inventario.dao;
 import com.gabbro95.inventario.model.Utente;
 
 import java.sql.*;
+import java.time.LocalDate;
 
-public class UtenteDAO {
+public class UtenteDAO extends BaseDAO {
 
     public Utente trovaPerEmail(String email) {
-        String sql = "SELECT * FROM utente WHERE email = ?";
-        try (Connection conn = DBManager.getConnection();
-             PreparedStatement stmt = conn.prepareStatement(sql)) {
-            stmt.setString(1, email);
-            ResultSet rs = stmt.executeQuery();
-            if (rs.next()) {
-                return new Utente(rs.getInt("id"), rs.getString("email"));
+        return execute(conn -> {
+            String sql = "SELECT * FROM utente WHERE email = ?";
+            try (PreparedStatement stmt = conn.prepareStatement(sql)) {
+                stmt.setString(1, email);
+                try (ResultSet rs = stmt.executeQuery()) {
+                    if (rs.next()) {
+                        Utente u = new Utente();
+                        u.setId(rs.getInt("id"));
+                        u.setEmail(rs.getString("email"));
+                        u.setNome(rs.getString("nome"));
+                        u.setImmagineProfilo(rs.getString("immagine_profilo"));
+                        u.setDataCreazione(rs.getDate("data_creazione").toLocalDate());
+                        return u;
+                    }
+                }
             }
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-        return null;
+            return null;
+        });
     }
 
-    public boolean creaUtente(Utente utente) {
-        String sql = "INSERT INTO utente (email) VALUES (?)";
-        try (Connection conn = DBManager.getConnection();
-             PreparedStatement stmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
+    public void salvaOUAggiorna(Utente utente) {
+        Utente esistente = trovaPerEmail(utente.getEmail());
+        if (esistente != null) return;
 
-            stmt.setString(1, utente.getEmail());
-
-            int affectedRows = stmt.executeUpdate();
-
-            if (affectedRows > 0) {
-                ResultSet generatedKeys = stmt.getGeneratedKeys();
-                if (generatedKeys.next()) {
-                    utente.setId(generatedKeys.getInt(1));
-                }
-                return true;
+        execute(conn -> {
+            String sql = "INSERT INTO utente (email, nome, immagine_profilo, data_creazione) VALUES (?, ?, ?, ?)";
+            try (PreparedStatement stmt = conn.prepareStatement(sql)) {
+                stmt.setString(1, utente.getEmail());
+                stmt.setString(2, utente.getNome());
+                stmt.setString(3, utente.getImmagineProfilo());
+                stmt.setDate(4, Date.valueOf(utente.getDataCreazione()));
+                stmt.executeUpdate();
             }
-
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-
-        return false;
+            return null;
+        });
+    }
+    
+    public void inserisciOaggiornaUtente(Utente utente) {
+        execute(conn -> {
+            String sql = """
+                    INSERT INTO utente (email, nome, immagine_profilo, data_creazione)
+                    VALUES (?, ?, ?, ?)
+                    ON DUPLICATE KEY UPDATE nome = VALUES(nome), immagine_profilo = VALUES(immagine_profilo)
+                    """;
+            try (PreparedStatement stmt = conn.prepareStatement(sql)) {
+                stmt.setString(1, utente.getEmail());
+                stmt.setString(2, utente.getNome());
+                stmt.setString(3, utente.getImmagineProfilo());
+                stmt.setDate(4, Date.valueOf(utente.getDataCreazione()));
+                stmt.executeUpdate();
+            }
+            return null;
+        });
     }
 
 }

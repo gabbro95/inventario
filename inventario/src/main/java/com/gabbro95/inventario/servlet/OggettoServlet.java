@@ -34,7 +34,7 @@ public class OggettoServlet extends HttpServlet {
                 List<Oggetto> lista = oggettoDAO.trovaPerContenitoreId(contenitoreId);
                 request.setAttribute("listaOggetti", lista);
                 request.setAttribute("contenitoreId", contenitoreId);
-                request.getRequestDispatcher("/WEB-INF/oggetti.jsp").forward(request, response);
+                request.getRequestDispatcher("/jsp/oggetti.jsp").forward(request, response);
             } catch (NumberFormatException e) {
                 response.sendError(HttpServletResponse.SC_BAD_REQUEST, "ID contenitore non valido.");
             }

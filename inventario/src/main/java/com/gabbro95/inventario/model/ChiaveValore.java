@@ -21,6 +21,12 @@ public class ChiaveValore {
         this.oggettoId = oggettoId;
     }
 
+    // ✅ Nuovo costruttore richiesto:
+    public ChiaveValore(String chiave, String valore) {
+        this.chiave = chiave;
+        this.valore = valore;
+    }
+
     public int getId() {
         return id;
     }
