@@ -21,22 +21,34 @@ public class ContenitoreServlet extends HttpServlet {
     }
 
     @Override
-    protected void doPost(HttpServletRequest request, HttpServletResponse response)
+    protected void doPost(HttpServletRequest request, HttpServletResponse response) 
             throws ServletException, IOException {
+        
 
         HttpSession session = request.getSession(false);
-        Utente utente = (Utente) (session != null ? session.getAttribute("utente") : null);
+        if (session == null || session.getAttribute("utente") == null) {
+            response.sendRedirect(request.getContextPath() + "/index.jsp?errore=sessione_scaduta");
+            return;
+        }
+        Utente utente = (Utente) session.getAttribute("utente");
+        int utenteId = utente.getId();
 
-        if (utente == null) {
-            response.sendRedirect("index.jsp");
+        String nomeContenitore = request.getParameter("nome");
+
+        if (nomeContenitore == null || nomeContenitore.trim().isEmpty()) {
+            System.out.println("ERRORE: Il nome del contenitore è vuoto."); // DEBUG
+            response.sendRedirect(request.getContextPath() + "/dashboard?errore=Il+nome+del+contenitore+non+puo+essere+vuoto");
             return;
         }
 
-        String nome = request.getParameter("nome");
-        if (nome != null && !nome.trim().isEmpty()) {
-            contenitoreDAO.creaContenitore(nome, utente.getEmail());
-        }
+        try {
+            contenitoreDAO.creaContenitore(nomeContenitore.trim(), utenteId);
 
-        response.sendRedirect(request.getContextPath() + "/dashboard");
+            response.sendRedirect(request.getContextPath() + "/dashboard?successo=Contenitore+creato");
+
+        } catch (Exception e) {
+            e.printStackTrace(); 
+            response.sendRedirect(request.getContextPath() + "/dashboard?errore=Si+e+verificato+un+errore+nel+database");
+        }
     }
 }

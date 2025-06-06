@@ -23,20 +23,21 @@ public class DashboardServlet extends HttpServlet {
     }
 
     @Override
-    protected void doGet(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
-
+    protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         HttpSession session = request.getSession(false);
-        Utente utente = (session != null) ? (Utente) session.getAttribute("utente") : null;
-
-        if (utente == null) {
-            response.sendRedirect("index.jsp");
+        
+        if (session == null || session.getAttribute("utente") == null) {
+            response.sendRedirect(request.getContextPath() + "/login");
             return;
         }
 
-        List<Contenitore> contenitori = contenitoreDAO.getContenitoriPerUtente(utente.getEmail());
-        request.setAttribute("contenitori", contenitori);
+        Utente utente = (Utente) session.getAttribute("utente");
+        ContenitoreDAO contenitoreDAO = new ContenitoreDAO(); // O come lo inizializzi
 
+        // Prendi l'ID dall'oggetto Utente e passalo al metodo aggiornato del DAO
+        List<Contenitore> contenitori = contenitoreDAO.getContenitoriPerUtente(utente.getId()); //
+
+        request.setAttribute("contenitori", contenitori);
         request.getRequestDispatcher("/jsp/dashboard.jsp").forward(request, response);
     }
 }

@@ -1,0 +1,193 @@
+/* style.css */
+
+/* Stili Generali per il Body */
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; /* Un font moderno e leggibile */
+    background-color: #f8f9fa; /* Sfondo leggermente grigio, coerente con Bootstrap */
+    color: #212529; /* Colore testo standard Bootstrap */
+    line-height: 1.6;
+}
+
+/* Stili per i Container Principali delle Pagine */
+.page-container {
+    margin-top: 20px; /* Spazio sopra il contenuto principale */
+    margin-bottom: 40px;
+}
+
+/* Stili per le Card (elementi comuni in Bootstrap) */
+.card {
+    border: 1px solid #dee2e6; /* Bordo leggero per le card */
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1); /* Ombra leggera per profondità */
+}
+
+.card-header.bg-primary {
+    background-color: #007bff !important; /* Assicura che il blu primario sia usato */
+    color: white;
+}
+
+.card-header.bg-success {
+    background-color: #28a745 !important; /* Verde per successo */
+    color: white;
+}
+
+.card-header.bg-dark {
+    background-color: #343a40 !important; /* Scuro per la navbar o header tabelle */
+    color: white;
+}
+
+/* Miglioramento leggibilità per tabelle */
+.table th {
+    background-color: #343a40; /* Header tabelle scuro */
+    color: white;
+    font-weight: 600; /* Testo leggermente più grassetto per gli header */
+}
+
+.table td {
+    vertical-align: middle; /* Allinea verticalmente al centro il contenuto delle celle */
+}
+
+/* Stili per i bottoni, per un aspetto leggermente più personalizzato se necessario */
+.btn-primary {
+    background-color: #007bff;
+    border-color: #007bff;
+    /* transition: background-color 0.2s ease-in-out; */ /* Effetto hover base */
+}
+
+.btn-primary:hover {
+    background-color: #0056b3;
+    border-color: #0056b3;
+}
+
+/* Stili specifici per la Navbar se vuoi personalizzarla oltre Bootstrap */
+/* Esempio: .custom-navbar { ... } */
+
+
+/* Stili per il Login Container (da index.jsp) */
+.login-page-background { /* Da applicare al body di index.jsp se vuoi un background diverso solo lì */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+    background-color: #eef2f7; /* Un grigio-azzurro leggermente diverso per la pagina di login */
+    margin: 0;
+    padding: 15px; /* Padding per evitare che la card tocchi i bordi su schermi piccoli */
+}
+
+.login-container {
+    max-width: 450px; /* Leggermente più largo */
+    width: 100%;
+    background-color: #ffffff; /* Sfondo bianco per la card di login */
+    border-radius: 8px; /* Angoli arrotondati per la card */
+    padding: 20px; /* Padding interno alla card */
+}
+
+.login-container .card-header {
+    border-bottom: none; /* Rimuove il bordo inferiore dell'header della card se non piace */
+    text-align: center;
+    padding-top: 1.5rem;
+    padding-bottom: 1rem;
+}
+
+.login-container .google-btn img {
+    width: 20px;
+    margin-right: 10px;
+    vertical-align: middle;
+}
+.login-container .google-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 500;
+}
+
+.login-container .divider-text {
+    position: relative;
+    text-align: center;
+    margin-top: 1.5rem;
+    margin-bottom: 1.5rem;
+    color: #6c757d; /* Grigio per il testo "oppure" */
+}
+
+.login-container .divider-text span {
+    padding: 0 15px;
+    background-color: #ffffff; /* Deve corrispondere allo sfondo della .login-container card */
+    position: relative;
+    z-index: 1;
+}
+
+.login-container .divider-text:before {
+    content: "";
+    display: block;
+    border-top: 1px solid #ced4da; /* Bordo più leggero per il divisore */
+    width: 100%;
+    height: 1px;
+    position: absolute;
+    left: 0;
+    top: 50%;
+    z-index: 0;
+}
+
+.login-container .form-control-lg {
+    min-height: calc(1.5em + 1rem + 2px); /* Altezza standard per input lg Bootstrap */
+}
+
+.login-container .card-footer {
+    background-color: transparent; /* Rende trasparente il footer della card */
+    border-top: none; /* Rimuove il bordo superiore del footer */
+    padding-bottom: 1.5rem;
+}
+
+
+/* Stili per la Dashboard */
+.dashboard-welcome {
+    font-size: 1.75rem; /* Dimensione maggiore per il saluto */
+    font-weight: 500;
+}
+
+.contenitore-list-item:hover {
+    background-color: #e9ecef; /* Evidenzia item contenitore al hover */
+    transform: translateX(5px); /* Leggero spostamento */
+    transition: background-color 0.2s ease, transform 0.2s ease;
+}
+
+
+/* Stili per la pagina Oggetti */
+.oggetti-header {
+    font-size: 1.8rem;
+    font-weight: 500;
+    color: #007bff; /* Colora l'header con il tema primario */
+}
+
+.details-list {
+    font-size: 0.9em;
+    padding-left: 0;
+    list-style-type: none;
+}
+.details-list li {
+    margin-bottom: 0.25rem;
+    word-break: break-word; /* Evita overflow orizzontale per valori lunghi */
+}
+
+/* Stili per icone nei bottoni o link */
+.icon-link svg, .btn svg {
+    vertical-align: middle; /* Allinea meglio le icone SVG con il testo */
+}
+
+/* Utility per messaggi di errore/successo */
+.alert {
+    border-left-width: 5px; /* Bordo laterale per evidenziare l'alert */
+    padding: 1rem;
+}
+.alert-danger {
+    border-left-color: #dc3545;
+}
+.alert-success {
+    border-left-color: #28a745;
+}
+.alert-warning {
+    border-left-color: #ffc107;
+}
+.alert-info {
+    border-left-color: #17a2b8;
+}
+

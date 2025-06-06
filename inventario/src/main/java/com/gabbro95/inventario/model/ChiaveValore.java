@@ -5,57 +5,16 @@ public class ChiaveValore {
     private String chiave;
     private String valore;
     private int oggettoId;
-
+    
+    // Costruttori, Getter e Setter
     public ChiaveValore() {}
 
-    public ChiaveValore(int id, String chiave, String valore, int oggettoId) {
-        this.id = id;
-        this.chiave = chiave;
-        this.valore = valore;
-        this.oggettoId = oggettoId;
-    }
-
-    public ChiaveValore(String chiave, String valore, int oggettoId) {
-        this.chiave = chiave;
-        this.valore = valore;
-        this.oggettoId = oggettoId;
-    }
-
-    // ✅ Nuovo costruttore richiesto:
-    public ChiaveValore(String chiave, String valore) {
-        this.chiave = chiave;
-        this.valore = valore;
-    }
-
-    public int getId() {
-        return id;
-    }
-
-    public void setId(int id) {
-        this.id = id;
-    }
-
-    public String getChiave() {
-        return chiave;
-    }
-
-    public void setChiave(String chiave) {
-        this.chiave = chiave;
-    }
-
-    public String getValore() {
-        return valore;
-    }
-
-    public void setValore(String valore) {
-        this.valore = valore;
-    }
-
-    public int getOggettoId() {
-        return oggettoId;
-    }
-
-    public void setOggettoId(int oggettoId) {
-        this.oggettoId = oggettoId;
-    }
+    public int getId() { return id; }
+    public void setId(int id) { this.id = id; }
+    public String getChiave() { return chiave; }
+    public void setChiave(String chiave) { this.chiave = chiave; }
+    public String getValore() { return valore; }
+    public void setValore(String valore) { this.valore = valore; }
+    public int getOggettoId() { return oggettoId; }
+    public void setOggettoId(int oggettoId) { this.oggettoId = oggettoId; }
 }

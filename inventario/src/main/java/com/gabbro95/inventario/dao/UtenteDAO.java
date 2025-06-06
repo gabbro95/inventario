@@ -63,4 +63,17 @@ public class UtenteDAO extends BaseDAO {
         });
     }
 
+    public void updateUtente(Utente utente) {
+        execute(conn -> {
+            // L'email non si modifica perché è la chiave. Modifichiamo solo nome e immagine.
+            String sql = "UPDATE utente SET nome = ?, immagine_profilo = ? WHERE id = ?";
+            try (PreparedStatement stmt = conn.prepareStatement(sql)) {
+                stmt.setString(1, utente.getNome());
+                stmt.setString(2, utente.getImmagineProfilo());
+                stmt.setInt(3, utente.getId());
+                stmt.executeUpdate();
+            }
+            return null;
+        });
+    }
 }

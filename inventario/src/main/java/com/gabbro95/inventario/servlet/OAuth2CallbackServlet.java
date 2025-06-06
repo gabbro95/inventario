@@ -2,6 +2,7 @@ package com.gabbro95.inventario.servlet;
 
 import com.gabbro95.inventario.dao.UtenteDAO;
 import com.gabbro95.inventario.model.Utente;
+import com.gabbro95.inventario.utils.EmailUtils; // <-- IMPORTANTE
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import jakarta.servlet.ServletException;
@@ -15,7 +16,6 @@ import java.net.URL;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.time.LocalDate;
-import java.util.Map;
 
 @WebServlet("/oauth2callback")
 public class OAuth2CallbackServlet extends HttpServlet {
@@ -32,6 +32,7 @@ public class OAuth2CallbackServlet extends HttpServlet {
             return;
         }
 
+        // ... (tutto il codice per ottenere il token e le info utente rimane invariato)
         String clientId = System.getenv("GOOGLE_CLIENT_ID");
         String clientSecret = System.getenv("GOOGLE_CLIENT_SECRET");
         String redirectUri = request.getRequestURL().toString();
@@ -44,7 +45,6 @@ public class OAuth2CallbackServlet extends HttpServlet {
                 URLEncoder.encode(redirectUri, StandardCharsets.UTF_8)
         );
 
-        // Scambia codice per access token
         HttpURLConnection tokenConn = (HttpURLConnection) new URL(TOKEN_URL).openConnection();
         tokenConn.setRequestMethod("POST");
         tokenConn.setDoOutput(true);
@@ -58,7 +58,6 @@ public class OAuth2CallbackServlet extends HttpServlet {
 
         String accessToken = tokenJson.get("access_token").getAsString();
 
-        // Ottieni info utente
         HttpURLConnection userInfoConn = (HttpURLConnection) new URL(USERINFO_URL + "?access_token=" + accessToken).openConnection();
         userInfoConn.setRequestMethod("GET");
 
@@ -66,17 +65,40 @@ public class OAuth2CallbackServlet extends HttpServlet {
         try (InputStreamReader reader = new InputStreamReader(userInfoConn.getInputStream(), StandardCharsets.UTF_8)) {
             userInfo = JsonParser.parseReader(reader).getAsJsonObject();
         }
+        
+        // --- INIZIO BLOCCO MODIFICATO ---
 
-        String email = userInfo.get("email").getAsString();
+        // 1. Estrai l'email raw da Google
+        String emailDaGoogle = userInfo.get("email").getAsString();
+
+        // 2. NORMALIZZA L'EMAIL!
+        String emailNormalizzata = EmailUtils.normalizeGmail(emailDaGoogle);
+
+        // 3. Cerca se un utente con questa email normalizzata esiste già
+        Utente utente = utenteDAO.trovaPerEmail(emailNormalizzata);
+
         String nome = userInfo.has("name") ? userInfo.get("name").getAsString() : "";
         String immagine = userInfo.has("picture") ? userInfo.get("picture").getAsString() : "";
 
-        Utente utente = new Utente(email, nome, immagine, LocalDate.now());
+        if (utente != null) {
+            // L'UTENTE ESISTE GIÀ: Aggiorna i suoi dati se necessario
+            utente.setNome(nome);
+            utente.setImmagineProfilo(immagine);
+        } else {
+            // L'UTENTE NON ESISTE: Creane uno nuovo usando l'email normalizzata
+            utente = new Utente(emailNormalizzata, nome, immagine, LocalDate.now());
+        }
+
+        // 4. Salva o aggiorna l'utente nel database
         utenteDAO.salvaOUAggiorna(utente);
 
-        HttpSession session = request.getSession();
-        session.setAttribute("utente", utente);
+        // È una buona pratica ricaricare l'utente per avere l'oggetto completo dal DB (con l'ID corretto)
+        Utente utentePerSessione = utenteDAO.trovaPerEmail(emailNormalizzata);
 
-        response.sendRedirect("dashboard");
+        // 5. Imposta l'utente in sessione e reindirizza
+        HttpSession session = request.getSession();
+        session.setAttribute("utente", utentePerSessione);
+
+        response.sendRedirect(request.getContextPath() + "/dashboard");
     }
 }
