@@ -36,7 +36,13 @@ public class Main {
         // La baseDir è dove si trovano le tue risorse web (JSP, CSS, JS)
         // Per Heroku, il percorso corretto è la directory di lavoro corrente dove il JAR è estratto.
         // `.` indica la directory corrente del processo, dove il buildpack Heroku posiziona il tuo webapp.
-        String webappDir = new File("src/main/webapp").getAbsolutePath();
+        // Heroku imposta la directory corrente del processo (`user.dir`)
+        // alla radice del tuo slug deployato (`/app`).
+        // La tua webapp (con JSP, CSS, ecc.) si trova in `/app/src/main/webapp`.
+        String webappDir = System.getProperty("user.dir") + File.separator + "src" + File.separator + "main" + File.separator + "webapp";
+        // Puoi anche provare un punto semplice: "."
+        // String webappDir = "."; // A volte funziona se il buildpack configura correttamente
+        
         Context context = tomcat.addWebapp("/inventario", webappDir); //
         System.out.println("Configuring webapp with basedir: " + webappDir + " at context /inventario"); //
 
@@ -119,6 +125,13 @@ public class Main {
         // filterMap.setFilterName("AuthenticationFilter");
         // filterMap.addURLPattern("/*"); // Applica a tutti gli URL
         // context.addFilterMap(filterMap);
+	
+	// Mappa la root del contesto (/inventario/) alla DashboardServlet
+        // Così, quando si visita https://your-app.herokuapp.com/inventario/,
+        // verrà gestita dalla DashboardServlet.
+        Tomcat.addServlet(context, "RootServlet", new DashboardServlet()); // Puoi chiamarlo come vuoi
+        context.addServletMappingDecoded("/", "RootServlet"); // Mappa la root del contesto "/"
+
 
 
         tomcat.start(); //
