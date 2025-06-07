@@ -17,7 +17,10 @@ public class OAuth2LoginRedirectServlet extends HttpServlet {
                              request.getServerName() + ":" +
                              request.getServerPort() +
                              request.getContextPath() + "/oauth2callback";
+	
+	System.out.println("DEBUG OAUTH: Redirect URI generato: " + redirectUri);
 
+	
         String scope = "openid email";
         String responseType = "code";
 
