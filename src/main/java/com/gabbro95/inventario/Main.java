@@ -19,6 +19,7 @@ import com.gabbro95.inventario.servlet.ProfiloServlet;
 import org.apache.catalina.Context;
 import org.apache.catalina.startup.Tomcat;
 import java.io.File;
+import java.nio.file.Files; // <--- AGGIUNGI QUESTO IMPORT
 
 public class Main {
     public static void main(String[] args) throws Exception {
@@ -27,114 +28,88 @@ public class Main {
         if (port == null || port.isEmpty()) {
             port = "8080";
         }
+        System.out.println("DEBUG: Heroku PORT environment variable: " + port); // <--- AGGIUNGI QUESTO LOG
 
         Tomcat tomcat = new Tomcat();
         tomcat.setPort(Integer.parseInt(port));
-        tomcat.getConnector(); // Necessario per inizializzare il connettore
 
-        // Il contesto è "/inventario" come definito dal tuo URL su Heroku
-        // La baseDir è dove si trovano le tue risorse web (JSP, CSS, JS)
-        // Per Heroku, il percorso corretto è la directory di lavoro corrente dove il JAR è estratto.
-        // `.` indica la directory corrente del processo, dove il buildpack Heroku posiziona il tuo webapp.
-        // Heroku imposta la directory corrente del processo (`user.dir`)
-        // alla radice del tuo slug deployato (`/app`).
-        // La tua webapp (con JSP, CSS, ecc.) si trova in `/app/src/main/webapp`.
+        // AGGIUNGI QUESTO LISTENER PER PIÙ LOG SULL'AVVIO DI TOMCAT
+        tomcat.getServer().addLifecycleListener(new org.apache.catalina.startup.VersionLoggerListener()); // <--- AGGIUNGI QUESTA RIGA
+
+        tomcat.getConnector();
+
         String webappDir = System.getProperty("user.dir") + File.separator + "src" + File.separator + "main" + File.separator + "webapp";
-        // Puoi anche provare un punto semplice: "."
-        // String webappDir = "."; // A volte funziona se il buildpack configura correttamente
-        
-        Context context = tomcat.addWebapp("/inventario", webappDir); //
-        System.out.println("Configuring webapp with basedir: " + webappDir + " at context /inventario"); //
+
+        // AGGIUNGI QUESTI LOG DI DEBUG PER VERIFICARE LA DIRECTORY WEBAPP
+        File webappFile = new File(webappDir);
+        System.out.println("DEBUG: Calculated webappDir: " + webappDir); // <--- AGGIUNGI QUESTO LOG
+        System.out.println("DEBUG: Does webappDir exist? " + webappFile.exists()); // <--- AGGIUNGI QUESTO LOG
+        System.out.println("DEBUG: Is webappDir a directory? " + webappFile.isDirectory()); // <--- AGGIUNGI QUESTO LOG
+
+        // --- CAMBIA DA addWebapp A addContext QUI SOTTO ---
+        Context context = tomcat.addContext("/inventario", webappDir); // <--- CAMBIA QUESTA RIGA
+
+        System.out.println("Configuring webapp with basedir: " + webappDir + " at context /inventario");
 
         // *** Mappatura Programmatica di TUTTI i Servlet ***
+        // ... (tutte le mappature dei servlet rimangono invariate, come le hai ora) ...
+        // Le ho rimosse qui per brevità, ma nel tuo file devono esserci tutte quelle che hai già.
 
         // CarrelloServlet
-        Tomcat.addServlet(context, "CarrelloServlet", new CarrelloServlet()); //
-        context.addServletMappingDecoded("/carrello", "CarrelloServlet"); //
+        Tomcat.addServlet(context, "CarrelloServlet", new CarrelloServlet());
+        context.addServletMappingDecoded("/carrello", "CarrelloServlet");
 
         // ChiaveValoreServlet
-        Tomcat.addServlet(context, "ChiaveValoreServlet", new ChiaveValoreServlet()); //
-        context.addServletMappingDecoded("/chiave-valore", "ChiaveValoreServlet"); //
+        Tomcat.addServlet(context, "ChiaveValoreServlet", new ChiaveValoreServlet());
+        context.addServletMappingDecoded("/chiave-valore", "ChiaveValoreServlet");
 
-        // ContenitoreServlet
-        Tomcat.addServlet(context, "ContenitoreServlet", new ContenitoreServlet()); //
-        context.addServletMappingDecoded("/contenitore", "ContenitoreServlet"); //
+        Tomcat.addServlet(context, "ContenitoreServlet", new ContenitoreServlet());
+        context.addServletMappingDecoded("/contenitore", "ContenitoreServlet");
 
-        // DashboardServlet
-        Tomcat.addServlet(context, "DashboardServlet", new DashboardServlet()); //
-        context.addServletMappingDecoded("/dashboard", "DashboardServlet"); //
+        Tomcat.addServlet(context, "DashboardServlet", new DashboardServlet());
+        context.addServletMappingDecoded("/dashboard", "DashboardServlet");
 
-        // GestisciChiaveValoreServlet
-        Tomcat.addServlet(context, "GestisciChiaveValoreServlet", new GestisciChiaveValoreServlet()); //
-        context.addServletMappingDecoded("/gestisci-dettaglio", "GestisciChiaveValoreServlet"); //
+        Tomcat.addServlet(context, "GestisciChiaveValoreServlet", new GestisciChiaveValoreServlet());
+        context.addServletMappingDecoded("/gestisci-dettaglio", "GestisciChiaveValoreServlet");
 
-        // LoginServlet
-        Tomcat.addServlet(context, "LoginServlet", new LoginServlet()); //
-        context.addServletMappingDecoded("/login", "LoginServlet"); //
+        Tomcat.addServlet(context, "LoginServlet", new LoginServlet());
+        context.addServletMappingDecoded("/login", "LoginServlet");
 
-        // LogoutServlet
-        Tomcat.addServlet(context, "LogoutServlet", new LogoutServlet()); //
-        context.addServletMappingDecoded("/logout", "LogoutServlet"); //
+        Tomcat.addServlet(context, "LogoutServlet", new LogoutServlet());
+        context.addServletMappingDecoded("/logout", "LogoutServlet");
 
-        // ModificaChiaveValoreServlet
-        Tomcat.addServlet(context, "ModificaChiaveValoreServlet", new ModificaChiaveValoreServlet()); //
-        context.addServletMappingDecoded("/modifica-dettaglio", "ModificaChiaveValoreServlet"); //
+        Tomcat.addServlet(context, "ModificaChiaveValoreServlet", new ModificaChiaveValoreServlet());
+        context.addServletMappingDecoded("/modifica-dettaglio", "ModificaChiaveValoreServlet");
 
-        // ModificaOggettoServlet
-        Tomcat.addServlet(context, "ModificaOggettoServlet", new ModificaOggettoServlet()); //
-        context.addServletMappingDecoded("/modifica-oggetto", "ModificaOggettoServlet"); //
+        Tomcat.addServlet(context, "ModificaOggettoServlet", new ModificaOggettoServlet());
+        context.addServletMappingDecoded("/modifica-oggetto", "ModificaOggettoServlet");
 
-        // NuovoOggettoServlet
-        Tomcat.addServlet(context, "NuovoOggettoServlet", new NuovoOggettoServlet()); //
-        context.addServletMappingDecoded("/nuovo-oggetto", "NuovoOggettoServlet"); //
+        Tomcat.addServlet(context, "NuovaChiaveValoreServlet", new NuovaChiaveValoreServlet());
+        context.addServletMappingDecoded("/nuova-chiave-valore", "NuovaChiaveValoreServlet");
 
-        // OAuth2CallbackServlet
-        Tomcat.addServlet(context, "OAuth2CallbackServlet", new OAuth2CallbackServlet()); //
-        context.addServletMappingDecoded("/oauth2callback", "OAuth2CallbackServlet"); //
+        Tomcat.addServlet(context, "NuovoOggettoServlet", new NuovoOggettoServlet());
+        context.addServletMappingDecoded("/nuovo-oggetto", "NuovoOggettoServlet");
 
-        // OAuth2LoginRedirectServlet (QUESTO ERA IL PROBLEMA PRINCIPALE)
-        Tomcat.addServlet(context, "OAuth2LoginRedirectServlet", new OAuth2LoginRedirectServlet()); //
-        context.addServletMappingDecoded("/oauth2login", "OAuth2LoginRedirectServlet"); //
+        Tomcat.addServlet(context, "OAuth2CallbackServlet", new OAuth2CallbackServlet());
+        context.addServletMappingDecoded("/oauth2callback", "OAuth2CallbackServlet");
 
-        // OggettoServlet
-        Tomcat.addServlet(context, "OggettoServlet", new OggettoServlet()); //
-        context.addServletMappingDecoded("/oggetti", "OggettoServlet"); //
+        Tomcat.addServlet(context, "OAuth2LoginRedirectServlet", new OAuth2LoginRedirectServlet());
+        context.addServletMappingDecoded("/oauth2login", "OAuth2LoginRedirectServlet");
 
-        // ProfiloServlet
-        Tomcat.addServlet(context, "ProfiloServlet", new ProfiloServlet()); //
-        context.addServletMappingDecoded("/profilo", "ProfiloServlet"); //
+        Tomcat.addServlet(context, "OggettoServlet", new OggettoServlet());
+        context.addServletMappingDecoded("/oggetti", "OggettoServlet");
 
-        // IMPORTANTE: Mappa la root del contesto ("/") alla tua DashboardServlet o a una HomeServlet
-        // Se la tua applicazione deve rispondere anche a "/inventario" (senza niente dopo),
-        // devi mappare la root del contesto a un servlet.
-        // Ad esempio, la DashboardServlet è un buon candidato per la pagina principale dopo il login.
-        // Se hai una HomeServlet che vuoi che gestisca l'URL "/inventario", mappala qui.
-        // In questo caso, suppongo che l'URL principale dopo il login sia "/dashboard".
-        // Se vai su /inventario, la tua index.jsp probabilmente reindirizza a /login o /dashboard.
-        // Per assicurarti che anche l'URL base funzioni correttamente:
-        // Potresti anche voler mappare un servlet alla root del contesto "/"
-        // Tomcat.addServlet(context, "DefaultHome", new DashboardServlet()); // Puoi usare Dashboard o una HomeServlet
-        // context.addServletMappingDecoded("/", "DefaultHome"); // Esempio: mappa "/" a DashboardServlet
+        Tomcat.addServlet(context, "ProfiloServlet", new ProfiloServlet());
+        context.addServletMappingDecoded("/profilo", "ProfiloServlet");
 
-        // Se hai un filtro (es. per l'autenticazione), lo registreresti qui in modo simile:
-        // FilterDef filterDef = new FilterDef();
-        // filterDef.setFilterName("AuthenticationFilter");
-        // filterDef.setFilterClass("com.gabbro95.inventario.filter.AuthenticationFilter");
-        // context.addFilterDef(filterDef);
-        // FilterMap filterMap = new FilterMap();
-        // filterMap.setFilterName("AuthenticationFilter");
-        // filterMap.addURLPattern("/*"); // Applica a tutti gli URL
-        // context.addFilterMap(filterMap);
-	
-	// Mappa la root del contesto (/inventario/) alla DashboardServlet
-        // Così, quando si visita https://your-app.herokuapp.com/inventario/,
-        // verrà gestita dalla DashboardServlet.
-        Tomcat.addServlet(context, "RootServlet", new DashboardServlet()); // Puoi chiamarlo come vuoi
-        context.addServletMappingDecoded("/", "RootServlet"); // Mappa la root del contesto "/"
+        Tomcat.addServlet(context, "RootServlet", new DashboardServlet());
+        context.addServletMappingDecoded("/", "RootServlet");
 
 
-
-        tomcat.start(); //
-        tomcat.getServer().await(); //
+        System.out.println("DEBUG: Starting Tomcat..."); // <--- AGGIUNGI QUESTO LOG
+        tomcat.start();
+        System.out.println("DEBUG: Tomcat started."); // <--- AGGIUNGI QUESTO LOG
+        tomcat.getServer().await();
+        System.out.println("DEBUG: Tomcat shut down."); // <--- AGGIUNGI QUESTO LOG
     }
 }
