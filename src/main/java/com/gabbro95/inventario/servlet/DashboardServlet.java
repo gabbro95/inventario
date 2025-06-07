@@ -5,12 +5,13 @@ import com.gabbro95.inventario.model.Contenitore;
 import com.gabbro95.inventario.model.Utente;
 
 import jakarta.servlet.ServletException;
+import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.*;
 
 import java.io.IOException;
-import java.io.PrintWriter;
 import java.util.List;
 
+@WebServlet("/dashboard")
 public class DashboardServlet extends HttpServlet {
 
 	private static final long serialVersionUID = 1L;
@@ -23,22 +24,6 @@ public class DashboardServlet extends HttpServlet {
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-	// --- INIZIO BLOCCO DI DEBUG TEMPORANEO ---
-        response.setContentType("text/html");
-        PrintWriter out = response.getWriter();
-        out.println("<!DOCTYPE html>");
-        out.println("<html>");
-        out.println("<head><title>Test App Heroku</title></head>");
-        out.println("<body>");
-        out.println("<h1>Funziona! La mia app risponde da Heroku!</h1>");
-        out.println("<p>Se vedi questa pagina, significa che DashboardServlet è stato raggiunto con successo.</p>");
-        out.println("<p>URL richiesto: " + request.getRequestURL() + "</p>");
-        out.println("<p>Context Path: " + request.getContextPath() + "</p>");
-        out.println("</body>");
-        out.println("</html>");
-        out.close();
-        // --- FINE BLOCCO DI DEBUG TEMPORANEO ---
-/*
         HttpSession session = request.getSession(false);
         
         if (session == null || session.getAttribute("utente") == null) {
@@ -54,6 +39,5 @@ public class DashboardServlet extends HttpServlet {
 
         request.setAttribute("contenitori", contenitori);
         request.getRequestDispatcher("/jsp/dashboard.jsp").forward(request, response);
-*/
     }
 }

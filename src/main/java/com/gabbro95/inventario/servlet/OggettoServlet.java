@@ -10,6 +10,7 @@ import com.gabbro95.inventario.model.Utente;
 
 import jakarta.servlet.RequestDispatcher;
 import jakarta.servlet.ServletException;
+import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -22,6 +23,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+
+@WebServlet("/oggetti")
 public class OggettoServlet extends HttpServlet {
     private static final long serialVersionUID = 1L;
 

@@ -47,9 +47,11 @@ public class UtenteDAO extends BaseDAO {
     
     public void inserisciOaggiornaUtente(Utente utente) {
         execute(conn -> {
-            String sql = "INSERT INTO utente (email, nome, immagine_profilo, data_creazione)" +
-                    "VALUES (?, ?, ?, ?)" +
-                    "ON DUPLICATE KEY UPDATE nome = VALUES(nome), immagine_profilo = VALUES(immagine_profilo)";
+            String sql = """
+                    INSERT INTO utente (email, nome, immagine_profilo, data_creazione)
+                    VALUES (?, ?, ?, ?)
+                    ON DUPLICATE KEY UPDATE nome = VALUES(nome), immagine_profilo = VALUES(immagine_profilo)
+                    """;
             try (PreparedStatement stmt = conn.prepareStatement(sql)) {
                 stmt.setString(1, utente.getEmail());
                 stmt.setString(2, utente.getNome());

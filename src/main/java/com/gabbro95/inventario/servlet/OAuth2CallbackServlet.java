@@ -2,10 +2,11 @@ package com.gabbro95.inventario.servlet;
 
 import com.gabbro95.inventario.dao.UtenteDAO;
 import com.gabbro95.inventario.model.Utente;
-import com.gabbro95.inventario.utils.EmailUtils; 
+import com.gabbro95.inventario.utils.EmailUtils; // <-- IMPORTANTE
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import jakarta.servlet.ServletException;
+import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.*;
 
 import java.io.IOException;
@@ -16,6 +17,7 @@ import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.time.LocalDate;
 
+@WebServlet("/oauth2callback")
 public class OAuth2CallbackServlet extends HttpServlet {
     private static final String TOKEN_URL = "https://oauth2.googleapis.com/token";
     private static final String USERINFO_URL = "https://www.googleapis.com/oauth2/v3/userinfo";

@@ -3,12 +3,14 @@ package com.gabbro95.inventario.servlet;
 
 import com.gabbro95.inventario.dao.ChiaveValoreDAO;
 import jakarta.servlet.ServletException;
+import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
 import java.io.IOException;
 
+@WebServlet("/gestisci-dettaglio")
 public class GestisciChiaveValoreServlet extends HttpServlet {
     
     private ChiaveValoreDAO chiaveValoreDAO;
