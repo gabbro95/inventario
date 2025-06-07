@@ -5,13 +5,11 @@ import com.gabbro95.inventario.model.Contenitore;
 import com.gabbro95.inventario.model.Utente;
 
 import jakarta.servlet.ServletException;
-import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.*;
 
 import java.io.IOException;
 import java.util.List;
 
-@WebServlet("/dashboard")
 public class DashboardServlet extends HttpServlet {
 
 	private static final long serialVersionUID = 1L;

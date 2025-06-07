@@ -5,13 +5,11 @@ import com.gabbro95.inventario.model.Utente;
 import com.gabbro95.inventario.utils.EmailUtils;
 
 import jakarta.servlet.ServletException;
-import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.*;
 
 import java.io.IOException;
 import java.time.LocalDate;
 
-@WebServlet("/login")
 public class LoginServlet extends HttpServlet {
     private static final long serialVersionUID = 1L;
     private UtenteDAO utenteDAO;

@@ -4,7 +4,6 @@ package com.gabbro95.inventario.servlet;
 import com.gabbro95.inventario.dao.UtenteDAO;
 import com.gabbro95.inventario.model.Utente;
 import jakarta.servlet.ServletException;
-import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -12,7 +11,6 @@ import jakarta.servlet.http.HttpSession;
 
 import java.io.IOException;
 
-@WebServlet("/profilo")
 public class ProfiloServlet extends HttpServlet {
     private UtenteDAO utenteDAO;
 

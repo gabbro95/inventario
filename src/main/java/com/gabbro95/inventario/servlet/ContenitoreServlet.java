@@ -4,12 +4,10 @@ import com.gabbro95.inventario.dao.ContenitoreDAO;
 import com.gabbro95.inventario.model.Utente;
 
 import jakarta.servlet.ServletException;
-import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.*;
 
 import java.io.IOException;
 
-@WebServlet("/contenitore")
 public class ContenitoreServlet extends HttpServlet {
 
     private static final long serialVersionUID = 1L;

@@ -2,7 +2,6 @@
 package com.gabbro95.inventario.servlet;
 
 import jakarta.servlet.ServletException;
-import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -10,8 +9,6 @@ import java.io.IOException;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 
-// CONTROLLA CHE QUESTA RIGA SIA ESATTAMENTE COSÌ
-@WebServlet("/oauth2login")
 public class OAuth2LoginRedirectServlet extends HttpServlet {
     private static final long serialVersionUID = 1L;
 

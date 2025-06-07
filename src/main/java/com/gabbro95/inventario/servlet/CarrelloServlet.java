@@ -7,7 +7,6 @@ import com.gabbro95.inventario.model.Utente;
 
 import jakarta.servlet.RequestDispatcher;
 import jakarta.servlet.ServletException;
-import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -17,7 +16,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-@WebServlet("/carrello")
 public class CarrelloServlet extends HttpServlet {
     private CarrelloDAO carrelloDAO;
     private static final int SOGLIA_CARRELLO = 5; // Imposta qui la soglia che preferisci
