@@ -18,7 +18,7 @@ public class OAuth2LoginRedirectServlet extends HttpServlet {
                              request.getServerPort() +
                              request.getContextPath() + "/oauth2callback";
 
-        String scope = "openid email";
+        String scope = "openid email profile";
         String responseType = "code";
 
         String authUrl = "https://accounts.google.com/o/oauth2/v2/auth" +
