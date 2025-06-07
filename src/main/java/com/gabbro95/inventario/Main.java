@@ -20,7 +20,7 @@ public class Main {
         tomcat.getConnector(); // Necessario per inizializzare il connettore
 
         // Dice a Tomcat dove trovare i file JSP e le altre risorse web
-        tomcat.addWebapp("", webappDirPath);
+        tomcat.addWebapp("/inventario", webappDirPath);
         System.out.println("Configuring app with basedir: " + webappDirPath);
 
         tomcat.start();
