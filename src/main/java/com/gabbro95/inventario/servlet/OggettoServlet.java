@@ -19,8 +19,8 @@ import jakarta.servlet.http.HttpSession;
 import java.io.IOException;
 import java.time.LocalDate;
 import java.util.ArrayList;
-import java.util.Collections; // Import per Collections.sort
-import java.util.Comparator;  // Import per Comparator
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -64,9 +64,26 @@ public class OggettoServlet extends HttpServlet {
                     return;
                 }
 
-                List<Oggetto> listaOggetti = oggettoDAO.trovaPerContenitoreId(contenitoreId);
+                // --- Inizio LOGICA DI RICERCA ---
+                String searchTerm = request.getParameter("searchTerm");
+                List<Oggetto> listaOggetti;
 
-                // --- LOGICA DI ORDINAMENTO AGGIUNTA QUI ---
+                if (searchTerm != null && !searchTerm.trim().isEmpty()) {
+                    // Se c'è un termine di ricerca, filtriamo gli oggetti
+                    listaOggetti = oggettoDAO.trovaPerContenitoreId(contenitoreId)
+                                             .stream()
+                                             .filter(o -> o.getNome().toLowerCase().contains(searchTerm.toLowerCase()))
+                                             .collect(Collectors.toList());
+                    // Passiamo il termine di ricerca alla JSP per pre-popolare il campo e per evidenziazione
+                    request.setAttribute("searchTerm", searchTerm);
+                } else {
+                    // Altrimenti, prendiamo tutti gli oggetti
+                    listaOggetti = oggettoDAO.trovaPerContenitoreId(contenitoreId);
+                }
+                // --- Fine LOGICA DI RICERCA ---
+
+
+                // --- LOGICA DI ORDINAMENTO ESISTENTE ---
                 String sortBy = request.getParameter("sortBy");
                 String sortOrder = request.getParameter("sortOrder"); // "asc" o "desc"
 
@@ -126,31 +143,22 @@ public class OggettoServlet extends HttpServlet {
             return;
         }
 
-        // Leggiamo il parametro 'action' per decidere cosa fare
         String action = request.getParameter("action");
         if (action == null) {
-            // Se l'azione non è specificata, assumiamo sia una creazione
-            // (per compatibilità con il form di nuovo_oggetto.jsp che non invia 'action')
             handleCreaOggetto(request, response, utente);
             return;
         }
 
-        // Usiamo uno switch per gestire le diverse azioni
         switch (action) {
             case "delete":
                 handleDeleteOggetto(request, response, utente);
                 break;
-            // Aggiungerai qui il case "update" quando implementerai la modifica dell'oggetto
-            // case "update":
-            //     handleUpdateOggetto(request, response, utente);
-            //     break;
             default:
                 String contenitoreId = request.getParameter("contenitoreId");
                 response.sendRedirect(request.getContextPath() + "/oggetti?contenitoreId=" + contenitoreId + "&erroreOggetto=azione_non_valida");
         }
     }
 
-    // Abbiamo bisogno di passare l'utente per i controlli di sicurezza
     private void handleCreaOggetto(HttpServletRequest request, HttpServletResponse response, Utente utente)
         throws ServletException, IOException {
 
@@ -165,7 +173,6 @@ public class OggettoServlet extends HttpServlet {
                 int numero = Integer.parseInt(numeroStr);
                 int contenitoreId = Integer.parseInt(contenitoreIdStr);
 
-                // Aggiungiamo un controllo di sicurezza: l'utente possiede il contenitore?
                 if (contenitoreDAO.getContenitoreById(contenitoreId, utente.getId()) == null) {
                     response.sendRedirect(request.getContextPath() + "/dashboard?errore=permesso_negato");
                     return;
@@ -183,27 +190,20 @@ public class OggettoServlet extends HttpServlet {
         }
     }
 
-
-    // NUOVO METODO PER GESTIRE L'ELIMINAZIONE
     private void handleDeleteOggetto(HttpServletRequest request, HttpServletResponse response, Utente utente)
             throws IOException {
-        String contenitoreIdStr = request.getParameter("contenitoreId"); // Ci serve per il redirect
+        String contenitoreIdStr = request.getParameter("contenitoreId");
         try {
             int oggettoId = Integer.parseInt(request.getParameter("oggettoId"));
             int contenitoreId = Integer.parseInt(contenitoreIdStr);
 
-            // --- CONTROLLO DI SICUREZZA FONDAMENTALE ---
-            // Prima di eliminare, verifichiamo che l'oggetto appartenga effettivamente
-            // a un contenitore di proprietà dell'utente loggato.
             Oggetto ogg = oggettoDAO.getOggettoById(oggettoId);
             if (ogg != null) {
                 Contenitore cont = contenitoreDAO.getContenitoreById(ogg.getContenitoreId(), utente.getId());
                 if (cont != null) {
-                    // Se entrambi i controlli passano, procediamo con l'eliminazione
                     oggettoDAO.deleteOggetto(oggettoId);
                     response.sendRedirect(request.getContextPath() + "/oggetti?contenitoreId=" + contenitoreId + "&successo=Oggetto+eliminato+correttamente");
                 } else {
-                    // L'utente sta cercando di eliminare un oggetto che non gli appartiene
                     response.sendRedirect(request.getContextPath() + "/dashboard?errore=accesso_negato");
                 }
             } else {
@@ -213,11 +213,4 @@ public class OggettoServlet extends HttpServlet {
             response.sendRedirect(request.getContextPath() + "/oggetti?contenitoreId=" + contenitoreIdStr + "&errore=id_non_valido");
         }
     }
-
-    // Il metodo handleCreaOggetto duplicato è stato rimosso per evitare errori.
-    // Assicurati di usare solo la versione che accetta 'Utente utente'.
-    // private void handleCreaOggetto(HttpServletRequest request, HttpServletResponse response)
-    //     throws ServletException, IOException {
-    //     ...
-    // }
 }

@@ -190,4 +190,8 @@ body {
 .alert-info {
     border-left-color: #17a2b8;
 }
+.highlight {
+    background-color: #ADD8E6; /* Azzurro chiaro */
+    font-weight: bold;
+}
 

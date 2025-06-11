@@ -9,11 +9,19 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Oggetti in: <c:out value="${contenitore.nome}" /></title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="<c:url value='/css/style.css'/>" rel="stylesheet"> <%-- ASSICURATI CHE IL PERCORSO SIA CORRETTO --%>
     <style>
+        /* Questo blocco style può essere rimosso se le classi sono tutte nel CSS esterno */
+        /* Alcuni stili sono già stati spostati nel tuo style.css, se ne mancano qui, puoi toglierli */
         body { background-color: #f8f9fa; }
         .table th { background-color: #343a40; color: white; }
         .details-list { font-size: 0.9em; padding-left: 0; list-style-type: none;}
         .details-list li { margin-bottom: 0.25rem; }
+        /* La classe highlight è ora nel tuo style.css esterno, puoi toglierla da qui */
+        /* .highlight {
+            background-color: #ADD8E6;
+            font-weight: bold;
+        } */
     </style>
 </head>
 <body>
@@ -62,6 +70,32 @@
             </form>
         </div>
 
+        <%-- Nuova Form per la Ricerca --%>
+        <div class="mb-3">
+            <form action="oggetti" method="get" class="row g-3 align-items-center">
+                <input type="hidden" name="contenitoreId" value="${contenitore.id}">
+                <input type="hidden" name="sortBy" value="${param.sortBy}"> <%-- Mantiene l'ordinamento esistente --%>
+                <input type="hidden" name="sortOrder" value="${param.sortOrder}"> <%-- Mantiene la direzione di ordinamento esistente --%>
+
+                <div class="col-md-auto">
+                    <label for="searchTerm" class="form-label mb-0">Cerca Oggetto:</label>
+                </div>
+                <div class="col-md-4">
+                    <input type="text" class="form-control" id="searchTerm" name="searchTerm"
+                           placeholder="Cerca per nome..." value="<c:out value="${searchTerm != null ? searchTerm : ''}" />">
+                </div>
+                <div class="col-md-auto">
+                    <button type="submit" class="btn btn-info">Cerca</button>
+                </div>
+                <c:if test="${not empty searchTerm}">
+                    <div class="col-md-auto">
+                        <a href="<c:url value='/oggetti?contenitoreId=${contenitore.id}&sortBy=${param.sortBy}&sortOrder=${param.sortOrder}' />" class="btn btn-outline-secondary">Reset Ricerca</a>
+                    </div>
+                </c:if>
+            </form>
+        </div>
+
+
         <%-- Gestione dei messaggi di errore/successo --%>
         <c:if test="${not empty param.errore}"><div class="alert alert-danger" role="alert"><c:out value="${param.errore}" /></div></c:if>
         <c:if test="${not empty param.successo}"><div class="alert alert-success" role="alert"><c:out value="${param.successo}" /></div></c:if>
@@ -82,7 +116,8 @@
                         </thead>
                         <tbody>
                             <c:forEach var="oggetto" items="${listaOggetti}">
-                                <tr class="${oggetto.numero <= oggetto.sogliaMinima ? 'table-warning' : ''}">
+                                <%-- Applica la classe 'highlight' se il nome dell'oggetto contiene il termine di ricerca --%>
+                                <tr class="${oggetto.numero <= oggetto.sogliaMinima ? 'table-warning' : ''} ${not empty searchTerm && oggetto.nome.toLowerCase().contains(searchTerm.toLowerCase()) ? 'highlight' : ''}">
                                     <td><c:out value="${oggetto.nome}" /></td>
                                     <td class="text-center"><c:out value="${oggetto.numero}" /></td>
                                     <td class="text-center"><c:out value="${oggetto.sogliaMinima}" /></td>
