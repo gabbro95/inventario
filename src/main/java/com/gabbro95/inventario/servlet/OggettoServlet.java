@@ -19,6 +19,8 @@ import jakarta.servlet.http.HttpSession;
 import java.io.IOException;
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Collections; // Import per Collections.sort
+import java.util.Comparator;  // Import per Comparator
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -56,14 +58,37 @@ public class OggettoServlet extends HttpServlet {
             try {
                 int contenitoreId = Integer.parseInt(contenitoreIdParam);
 
-                Contenitore contenitore = contenitoreDAO.getContenitoreById(contenitoreId, utente.getId()); 
+                Contenitore contenitore = contenitoreDAO.getContenitoreById(contenitoreId, utente.getId());
                 if (contenitore == null) {
                     response.sendRedirect(request.getContextPath() + "/dashboard?errore=contenitore_non_trovato");
                     return;
                 }
 
-                // Logica semplice: prende tutti gli oggetti senza filtro
                 List<Oggetto> listaOggetti = oggettoDAO.trovaPerContenitoreId(contenitoreId);
+
+                // --- LOGICA DI ORDINAMENTO AGGIUNTA QUI ---
+                String sortBy = request.getParameter("sortBy");
+                String sortOrder = request.getParameter("sortOrder"); // "asc" o "desc"
+
+                if (listaOggetti != null && !listaOggetti.isEmpty()) {
+                    Comparator<Oggetto> comparator = null;
+
+                    if ("nome".equals(sortBy)) {
+                        comparator = Comparator.comparing(Oggetto::getNome);
+                    } else if ("numero".equals(sortBy)) {
+                        comparator = Comparator.comparingInt(Oggetto::getNumero);
+                    } else if ("dataInserimento".equals(sortBy)) {
+                        comparator = Comparator.comparing(Oggetto::getDataInserimento);
+                    }
+
+                    if (comparator != null) {
+                        if ("desc".equals(sortOrder)) {
+                            comparator = comparator.reversed();
+                        }
+                        Collections.sort(listaOggetti, comparator);
+                    }
+                }
+                // --- FINE LOGICA DI ORDINAMENTO ---
 
                 Map<Integer, List<ChiaveValore>> mappaChiaviValore = null;
                 if (listaOggetti != null && !listaOggetti.isEmpty()) {
@@ -92,7 +117,7 @@ public class OggettoServlet extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        
+
         HttpSession session = request.getSession(false);
         Utente utente = (session != null) ? (Utente) session.getAttribute("utente") : null;
 
@@ -100,7 +125,7 @@ public class OggettoServlet extends HttpServlet {
             response.sendRedirect(request.getContextPath() + "/index.jsp");
             return;
         }
-        
+
         // Leggiamo il parametro 'action' per decidere cosa fare
         String action = request.getParameter("action");
         if (action == null) {
@@ -109,7 +134,7 @@ public class OggettoServlet extends HttpServlet {
             handleCreaOggetto(request, response, utente);
             return;
         }
-        
+
         // Usiamo uno switch per gestire le diverse azioni
         switch (action) {
             case "delete":
@@ -133,9 +158,29 @@ public class OggettoServlet extends HttpServlet {
         String numeroStr = request.getParameter("numero");
         String contenitoreIdStr = request.getParameter("contenitoreId");
 
-        // ... (Il resto del tuo metodo handleCreaOggetto va qui, assicurati di passare l'utente
-        //      e di verificare la proprietà del contenitore come già fai) ...
-        // Esempio: if (contenitoreDAO.getContenitoreById(contenitoreId, utente.getId()) == null) { ... }
+        if (nome != null && !nome.trim().isEmpty() &&
+            numeroStr != null && !numeroStr.trim().isEmpty() &&
+            contenitoreIdStr != null && !contenitoreIdStr.trim().isEmpty()) {
+            try {
+                int numero = Integer.parseInt(numeroStr);
+                int contenitoreId = Integer.parseInt(contenitoreIdStr);
+
+                // Aggiungiamo un controllo di sicurezza: l'utente possiede il contenitore?
+                if (contenitoreDAO.getContenitoreById(contenitoreId, utente.getId()) == null) {
+                    response.sendRedirect(request.getContextPath() + "/dashboard?errore=permesso_negato");
+                    return;
+                }
+
+                Oggetto oggetto = new Oggetto(nome, numero, contenitoreId);
+                oggettoDAO.creaOggetto(oggetto);
+                response.sendRedirect(request.getContextPath() + "/oggetti?contenitoreId=" + contenitoreId + "&successo=oggetto_creato");
+
+            } catch (NumberFormatException e) {
+                response.sendRedirect(request.getContextPath() + "/nuovo-oggetto?contenitoreId=" + contenitoreIdStr + "&errore=numero_invalido");
+            }
+        } else {
+            response.sendRedirect(request.getContextPath() + "/nuovo-oggetto?contenitoreId=" + contenitoreIdStr + "&errore=campi_mancanti");
+        }
     }
 
 
@@ -168,36 +213,11 @@ public class OggettoServlet extends HttpServlet {
             response.sendRedirect(request.getContextPath() + "/oggetti?contenitoreId=" + contenitoreIdStr + "&errore=id_non_valido");
         }
     }
-    private void handleCreaOggetto(HttpServletRequest request, HttpServletResponse response)
-        throws ServletException, IOException {
 
-        String nome = request.getParameter("nome");
-        String numeroStr = request.getParameter("numero");
-        String contenitoreIdStr = request.getParameter("contenitoreId");
-
-        if (nome != null && !nome.trim().isEmpty() && 
-            numeroStr != null && !numeroStr.trim().isEmpty() &&
-            contenitoreIdStr != null && !contenitoreIdStr.trim().isEmpty()) {
-            try {
-                int numero = Integer.parseInt(numeroStr);
-                int contenitoreId = Integer.parseInt(contenitoreIdStr);
-                
-                // Aggiungiamo un controllo di sicurezza: l'utente possiede il contenitore?
-                Utente utente = (Utente) request.getSession().getAttribute("utente");
-                if (contenitoreDAO.getContenitoreById(contenitoreId, utente.getId()) == null) {
-                    response.sendRedirect(request.getContextPath() + "/dashboard?errore=permesso_negato");
-                    return;
-                }
-
-                Oggetto oggetto = new Oggetto(nome, numero, contenitoreId);
-                oggettoDAO.creaOggetto(oggetto);
-                response.sendRedirect(request.getContextPath() + "/oggetti?contenitoreId=" + contenitoreId + "&successo=oggetto_creato");
-
-            } catch (NumberFormatException e) {
-                response.sendRedirect(request.getContextPath() + "/nuovo-oggetto?contenitoreId=" + contenitoreIdStr + "&errore=numero_invalido");
-            }
-        } else {
-            response.sendRedirect(request.getContextPath() + "/nuovo-oggetto?contenitoreId=" + contenitoreIdStr + "&errore=campi_mancanti");
-        }
-    }
+    // Il metodo handleCreaOggetto duplicato è stato rimosso per evitare errori.
+    // Assicurati di usare solo la versione che accetta 'Utente utente'.
+    // private void handleCreaOggetto(HttpServletRequest request, HttpServletResponse response)
+    //     throws ServletException, IOException {
+    //     ...
+    // }
 }
