@@ -82,7 +82,7 @@ public class ContenitoreDAO extends BaseDAO {
     }
 
     /**
-     * Elimina un contenitore specifico, verificando la sua proprietà tramite l'ID dell'utente.
+     * Elimina un contenitore, verificando la proprietà tramite l'ID dell'utente.
      *
      * @param contenitoreId L'ID del contenitore da eliminare.
      * @param utenteId L'ID dell'utente proprietario del contenitore.
@@ -100,7 +100,7 @@ public class ContenitoreDAO extends BaseDAO {
     }
 
     /**
-     * Aggiorna il nome di un contenitore esistente, verificando la sua proprietà tramite l'ID dell'utente.
+     * Aggiorna il nome di un contenitore, verificando la proprietà tramite l'ID dell'utente.
      *
      * @param contenitoreId L'ID del contenitore da aggiornare.
      * @param nuovoNome Il nuovo nome da assegnare al contenitore.
