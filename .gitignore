@@ -4,39 +4,57 @@ target/
 *.jar
 *.war
 *.ear
+pom.xml.tag
+pom.xml.releaseBackup
+pom.xml.versionsBackup
+pom.xml.next
+release.properties
+dependency-reduced-pom.xml
+buildNumber.properties
+.mvn/wrapper/maven-wrapper.jar # Ignora il wrapper Maven se non vuoi tracciarlo
 
-# === Eclipse ===
-.settings/
-.project
-.classpath
+# === IDEs ===
+.settings/          # Eclipse
+.project            # Eclipse
+.classpath          # Eclipse
+.idea/              # IntelliJ IDEA
+*.iml               # IntelliJ IDEA
+*.iws                # IntelliJ IDEA
+*.ipr               # IntelliJ IDEA
+*.run.xml           # IntelliJ IDEA run configurations
+.vscode/            # Visual Studio Code specific files
+.vscode-test/       # VS Code test runner
+*.code-workspace    # VS Code workspace files (if any)
 
 # === OS / Misc ===
-.DS_Store
-Thumbs.db
+.DS_Store           # macOS system files
+Thumbs.db           # Windows thumbnail cache
+desktop.ini         # Windows folder customization
+ehthumbs.db         # Windows media cache
+.localized          # macOS specific
+.Spotlight-V100     # macOS Spotlight metadata
+.Trashes            # macOS trash folder
+*.bak               # Backup files
+*.tmp               # Temporary files
+*.swp               # Swap files from Vim
+*~                  # Backup files from various editors
 
 # === Logs ===
 *.log
-
-# === IDEs ===
-.idea/
-*.iml
-*.iws
-*.ipr
-
-# === IntelliJ run configs ===
-*.run.xml
+logs/ # Se hai una cartella per i log
 
 # === Tomcat / Web deploy ===
-**/out/
-**/work/
-**/temp/
+**/out/             # Output directories (common in IDEs)
+**/work/            # Tomcat work directory
+**/temp/            # Tomcat temp directory
+catalina.out        # Tomcat log file (if written directly to project root)
 
 # === Configurazione sensibile ===
 .env
-*.properties
-!src/main/resources/application.properties
+*.properties        # Ignora tutti i file .properties di default
+!src/main/resources/application.properties # MA NON ignorare questo specifico file
 
-# === GitGuardian: escludi file segreti personalizzati ===
+# === GitGuardian (o sicurezza personalizzata): escludi file segreti personalizzati ===
 secrets/
 credentials/
 config/private/

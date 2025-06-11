@@ -12,7 +12,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Lista della Spesa</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link href="<c:url value='/css/style.css'/>" rel="stylesheet"> <%-- Assicurati che il percorso sia corretto --%>
+    <link href="<c:url value='/css/style.css'/>" rel="stylesheet"> 
 </head>
 <body>
     <jsp:include page="_navbar.jsp" />
