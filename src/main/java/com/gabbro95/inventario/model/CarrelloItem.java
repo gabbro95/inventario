@@ -2,10 +2,12 @@
 package com.gabbro95.inventario.model;
 
 public class CarrelloItem {
-    
+
     private int oggettoId;
     private String oggettoNome;
     private int quantitaAttuale;
+    private int contenitoreId; // NUOVO CAMPO
+    private String contenitoreNome; // NUOVO CAMPO (per visualizzazione in JSP)
 
     // Costruttori, Getter e Setter
     public CarrelloItem() {}
@@ -16,4 +18,10 @@ public class CarrelloItem {
     public void setOggettoNome(String oggettoNome) { this.oggettoNome = oggettoNome; }
     public int getQuantitaAttuale() { return quantitaAttuale; }
     public void setQuantitaAttuale(int quantitaAttuale) { this.quantitaAttuale = quantitaAttuale; }
+
+    // Nuovi Getter e Setter
+    public int getContenitoreId() { return contenitoreId; }
+    public void setContenitoreId(int contenitoreId) { this.contenitoreId = contenitoreId; }
+    public String getContenitoreNome() { return contenitoreNome; }
+    public void setContenitoreNome(String contenitoreNome) { this.contenitoreNome = contenitoreNome; }
 }

@@ -13,31 +13,22 @@ public class CarrelloDAO extends BaseDAO {
     /**
      * Popola il carrello con gli oggetti dell'utente che sono sotto una certa soglia.
      * Usa INSERT IGNORE per non inserire duplicati se un oggetto è già nel carrello.
+     * Questa versione è stata semplificata per essere chiamata in `popolaCarrelloAutomaticamente(int utenteId)`
+     * che ora svuota e ripopola per garantire coerenza con la `soglia_minima` aggiornata.
      */
-    public void popolaCarrelloAutomaticamente(int utenteId, int soglia) {
-        execute(conn -> {
-            String sql = "INSERT IGNORE INTO carrello (utente_id, oggetto_id) " +
-                         "SELECT ?, o.id FROM oggetto o " +
-                         "JOIN contenitore c ON o.contenitore_id = c.id " +
-                         "WHERE c.utente_id = ? AND o.numero <= ?";
-            try (PreparedStatement stmt = conn.prepareStatement(sql)) {
-                stmt.setInt(1, utenteId);
-                stmt.setInt(2, utenteId);
-                stmt.setInt(3, soglia);
-                stmt.executeUpdate();
-            }
-            return null;
-        });
-    }
+    // Ho rimosso il parametro soglia, dato che ora si usa o.soglia_minima dalla DB.
+    // public void popolaCarrelloAutomaticamente(int utenteId, int soglia) { ... }
 
     /**
-     * Recupera tutti gli elementi nel carrello di un utente, arricchiti con i dati dell'oggetto.
+     * Recupera tutti gli elementi nel carrello di un utente, arricchiti con i dati dell'oggetto E del contenitore.
      */
     public List<CarrelloItem> getCarrelloPerUtente(int utenteId) {
         return execute(conn -> {
             List<CarrelloItem> items = new ArrayList<>();
-            String sql = "SELECT o.id, o.nome, o.numero FROM carrello cr " +
+            String sql = "SELECT o.id, o.nome, o.numero, o.contenitore_id, c.nome AS contenitore_nome " + // AGGIUNTA
+                         "FROM carrello cr " +
                          "JOIN oggetto o ON cr.oggetto_id = o.id " +
+                         "JOIN contenitore c ON o.contenitore_id = c.id " + // AGGIUNTA JOIN
                          "WHERE cr.utente_id = ?";
             try (PreparedStatement stmt = conn.prepareStatement(sql)) {
                 stmt.setInt(1, utenteId);
@@ -47,6 +38,8 @@ public class CarrelloDAO extends BaseDAO {
                         item.setOggettoId(rs.getInt("id"));
                         item.setOggettoNome(rs.getString("nome"));
                         item.setQuantitaAttuale(rs.getInt("numero"));
+                        item.setContenitoreId(rs.getInt("contenitore_id")); // POPOLA NUOVO CAMPO
+                        item.setContenitoreNome(rs.getString("contenitore_nome")); // POPOLA NUOVO CAMPO
                         items.add(item);
                     }
                 }
@@ -62,7 +55,7 @@ public class CarrelloDAO extends BaseDAO {
         if (oggettiDaAggiornare == null || oggettiDaAggiornare.isEmpty()) {
             return;
         }
-        
+
         // Otteniamo la lista degli ID dalla mappa per la clausola DELETE
         java.util.List<Integer> oggettoIds = new ArrayList<>(oggettiDaAggiornare.keySet());
 
@@ -91,7 +84,7 @@ public class CarrelloDAO extends BaseDAO {
                     }
                     deleteStmt.executeBatch();
                 }
-                
+
                 conn.commit(); // Conferma la transazione
             } catch (Exception e) {
                 conn.rollback(); // In caso di errore, annulla tutto
@@ -102,7 +95,11 @@ public class CarrelloDAO extends BaseDAO {
             return null;
         });
     }
-    
+
+    /**
+     * Popola o ripopola il carrello automaticamente con gli oggetti sotto soglia minima.
+     * Prima svuota il carrello per l'utente, poi inserisce gli oggetti che rispettano la soglia.
+     */
     public void popolaCarrelloAutomaticamente(int utenteId) {
         execute(conn -> {
             // Avviamo una transazione per assicurarci che entrambe le operazioni abbiano successo
@@ -116,11 +113,11 @@ public class CarrelloDAO extends BaseDAO {
                 }
 
                 // --- PASSO 2: RI-POPOLA IL CARRELLO CON I DATI AGGIORNATI ---
-                // Questa è la query intelligente che già avevamo
+                // La query ora si basa su o.soglia_minima direttamente dalla tabella oggetto
                 String insertSql = "INSERT INTO carrello (utente_id, oggetto_id) " +
                                    "SELECT c.utente_id, o.id FROM oggetto o " +
                                    "JOIN contenitore c ON o.contenitore_id = c.id " +
-                                   "WHERE c.utente_id = ? AND o.numero <= o.soglia_minima";
+                                   "WHERE c.utente_id = ? AND o.numero <= o.soglia_minima"; // Usa o.soglia_minima
                 try (PreparedStatement insertStmt = conn.prepareStatement(insertSql)) {
                     insertStmt.setInt(1, utenteId);
                     insertStmt.executeUpdate();
